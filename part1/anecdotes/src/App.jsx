@@ -23,17 +23,14 @@ const App = () => {
   }
  
   const handleRandom = () => {
-    setSelected(randomNumberInRange(0,anecdotes.length))
-    console.log(anecdotes[selected])
-    console.log(votes[selected])
+    const randomIndex = randomNumberInRange(0, anecdotes.length);
+    setSelected(randomIndex);
   }
 
   const handleVote = () => {
     const newVotes = [...votes]
     newVotes[selected] += 1
     setVotes(newVotes)
-    console.log(selected, 'selected')
-    console.log(votes[selected], 'votes')
   }
 
   const findMaxIndex = () => {
