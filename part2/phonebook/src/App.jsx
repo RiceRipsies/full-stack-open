@@ -44,7 +44,7 @@ const App = () => {
     const newPerson = {
       name: newName,
       number: newNumber,
-      id: persons.length + 1, // check length of array and set ID for new entry
+      // id: persons.length + 1, // check length of array and set ID for new entry
     };
 
     // Check if person exists and throw error if so
@@ -52,10 +52,13 @@ const App = () => {
       alert(`${newName} is already added to the phonebook`);
       return;
     }
-
-    setPersons(persons.concat(newPerson)); // Add new person to the list
-    setNewName(""); // Clear input field
-    setNewNumber("");
+    // Post to server using axios
+    axios.post("http://localhost:3001/persons", newPerson).then((response) => {
+      console.log(response);
+      setPersons(persons.concat(response.data)); // sync local to server
+      setNewName(""); // clear the form state
+      setNewNumber("");
+    });
   };
 
   return (
