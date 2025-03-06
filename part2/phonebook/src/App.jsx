@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
+import personService from './services/persons'
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
@@ -10,15 +10,11 @@ const App = () => {
   const [newNumber, setNewNumber] = useState("");
   const [newFilter, setFilter] = useState("");
 
-  const hook = () => {
-    console.log("effect");
-    axios.get("http://localhost:3001/persons").then((response) => {
-      console.log("promise fulfilled");
-      setPersons(response.data);
-    });
-  };
-
-  useEffect(hook, []);
+  useEffect(() => {
+    personService.getAll().then(initialPersons => {
+      setPersons(initialPersons)
+    })
+  }, [])
 
   // Handle input changes
   const handleNameChange = (event) => {
@@ -52,13 +48,12 @@ const App = () => {
       alert(`${newName} is already added to the phonebook`);
       return;
     }
-    // Post to server using axios
-    axios.post("http://localhost:3001/persons", newPerson).then((response) => {
-      console.log(response);
-      setPersons(persons.concat(response.data)); // sync local to server
-      setNewName(""); // clear the form state
-      setNewNumber("");
-    });
+    // Post to server using service
+    personService.create(newPerson).then(returnedPerson => {
+      setPersons(persons.concat(returnedPerson))
+      setNewName('')
+      setNewNumber('')
+    })
   };
 
   return (
