@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import personService from './services/persons'
+import personService from "./services/persons";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
@@ -11,10 +11,10 @@ const App = () => {
   const [newFilter, setFilter] = useState("");
 
   useEffect(() => {
-    personService.getAll().then(initialPersons => {
-      setPersons(initialPersons)
-    })
-  }, [])
+    personService.getAll().then((initialPersons) => {
+      setPersons(initialPersons);
+    });
+  }, []);
 
   // Handle input changes
   const handleNameChange = (event) => {
@@ -25,6 +25,20 @@ const App = () => {
   };
   const handleFilterChange = (event) => {
     setFilter(event.target.value);
+  };
+
+  // Handle deleting person
+  const handleDelete = (id) => {
+    personService
+      .deletePerson(id)
+      .then(() => {
+        personService.getAll().then((updatedPersons) => {
+          setPersons(updatedPersons);
+        });
+      })
+      .catch((error) => {
+        console.error("Failed to delete person:", error);
+      });
   };
 
   // Searching & filtering function
@@ -49,11 +63,11 @@ const App = () => {
       return;
     }
     // Post to server using service
-    personService.create(newPerson).then(returnedPerson => {
-      setPersons(persons.concat(returnedPerson))
-      setNewName('')
-      setNewNumber('')
-    })
+    personService.create(newPerson).then((returnedPerson) => {
+      setPersons(persons.concat(returnedPerson));
+      setNewName("");
+      setNewNumber("");
+    });
   };
 
   return (
@@ -69,7 +83,10 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h2>Numbers</h2>
-      <Persons persons={filterItems(persons, newFilter)} />
+      <Persons
+        persons={filterItems(persons, newFilter)}
+        deletePerson={handleDelete}
+      />
       {/* Use filtering function to display filtered person*/}
     </div>
   );
