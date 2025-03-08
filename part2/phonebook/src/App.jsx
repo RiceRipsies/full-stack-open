@@ -28,17 +28,21 @@ const App = () => {
   };
 
   // Handle deleting person
-  const handleDelete = (id) => {
-    personService
-      .deletePerson(id)
-      .then(() => {
-        personService.getAll().then((updatedPersons) => {
-          setPersons(updatedPersons);
+  const handleDelete = (id, name) => {
+    if (confirm("Delete " + name + "?")) {
+      personService
+        .deletePerson(id)
+        .then(() => {
+          personService.getAll().then((updatedPersons) => {
+            setPersons(updatedPersons);
+          });
+        })
+        .catch((error) => {
+          console.error("Failed to delete person:", error);
         });
-      })
-      .catch((error) => {
-        console.error("Failed to delete person:", error);
-      });
+    } else {
+      return;
+    }
   };
 
   // Searching & filtering function
