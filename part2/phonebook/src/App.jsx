@@ -61,19 +61,33 @@ const App = () => {
       // leave setting id to server
     };
 
-    // Check if person exists and throw error if so
+    // Check if person exists handle changing number
     if (persons.some((person) => person.name === newPerson.name)) {
       if (
-        confirm(newPerson.name + " is already in the phonebook. Overwrite?")
+        confirm(
+          newPerson.name + " is already in the phonebook, replace old number?"
+        )
       ) {
-        // look up the index of person with same name
-        const personIndex = persons.findIndex(
+        // Find person to update based on name
+        const personToUpdate = persons.find(
           (person) => person.name === newPerson.name
         );
-        console.log(personIndex);
-
+        // define updatedPerson and add updated number
+        const updatedPerson = { ...personToUpdate, number: newNumber };
+        personService
+          .update(updatedPerson.id, updatedPerson)
+          .then((returnedPerson) => {
+            setPersons(
+              persons.map((person) =>
+                person.id !== updatedPerson.id ? person : returnedPerson
+              )
+            );
+          });
+        setNewName("");
+        setNewNumber("");
+        console.log(updatedPerson);
         return;
-      } else return;
+      }
     }
     // Post to server using service
     personService.create(newPerson).then((returnedPerson) => {
