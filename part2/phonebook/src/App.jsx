@@ -58,13 +58,22 @@ const App = () => {
     const newPerson = {
       name: newName,
       number: newNumber,
-      // id: persons.length + 1, // check length of array and set ID for new entry
+      // leave setting id to server
     };
 
     // Check if person exists and throw error if so
     if (persons.some((person) => person.name === newPerson.name)) {
-      alert(`${newName} is already added to the phonebook`);
-      return;
+      if (
+        confirm(newPerson.name + " is already in the phonebook. Overwrite?")
+      ) {
+        // look up the index of person with same name
+        const personIndex = persons.findIndex(
+          (person) => person.name === newPerson.name
+        );
+        console.log(personIndex);
+
+        return;
+      } else return;
     }
     // Post to server using service
     personService.create(newPerson).then((returnedPerson) => {
