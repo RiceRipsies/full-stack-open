@@ -3,12 +3,15 @@ import personService from "./services/persons";
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
+import Notification from "./components/Notification";
+import "./index.css";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [newFilter, setFilter] = useState("");
+  const [notificationMessage, setNotificationMessage] = useState(null);
 
   useEffect(() => {
     personService.getAll().then((initialPersons) => {
@@ -36,9 +39,18 @@ const App = () => {
           personService.getAll().then((updatedPersons) => {
             setPersons(updatedPersons);
           });
+          setNotificationMessage("Removed " + name);
+          setTimeout(() => {
+            setNotificationMessage(null);
+          }, 5000);
         })
         .catch((error) => {
-          console.error("Failed to delete person:", error);
+          setNotificationMessage(
+            `Deleting person '${name} failed, already deleted from server'`
+          );
+          set(() => {
+            setErrorMessage(null);
+          }, 5000);
         });
     } else {
       return;
@@ -82,6 +94,10 @@ const App = () => {
                 person.id !== updatedPerson.id ? person : returnedPerson
               )
             );
+            setNotificationMessage("Updated " + returnedPerson.name);
+            setTimeout(() => {
+              setNotificationMessage(null);
+            }, 5000);
           });
         setNewName("");
         setNewNumber("");
@@ -94,11 +110,16 @@ const App = () => {
       setPersons(persons.concat(returnedPerson));
       setNewName("");
       setNewNumber("");
+      setNotificationMessage("Added " + returnedPerson.name);
+      setTimeout(() => {
+        setNotificationMessage(null);
+      }, 5000);
     });
   };
 
   return (
     <div>
+      <Notification message={notificationMessage} />
       <h2>Phonebook</h2>
       <Filter value={newFilter} onChange={handleFilterChange} />
       <h2>Add New</h2>
