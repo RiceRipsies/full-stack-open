@@ -49,7 +49,7 @@ const App = () => {
             `Deleting person '${name} failed, already deleted from server'`
           );
           set(() => {
-            setErrorMessage(null);
+            setNotificationMessage(null);
           }, 5000);
         });
     } else {
